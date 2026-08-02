@@ -1,56 +1,42 @@
 plugins {
     `java-library`
     `maven-publish`
-    id("com.gradleup.shadow") version "9.2.2"
+    alias(libs.plugins.jcommon)
+    alias(libs.plugins.bundler)
 }
 
 group = "net.okocraft"
 version = "1.0.0"
 
-repositories {
-    mavenCentral()
-    maven("https://repo.papermc.io/repository/maven-public/")
-    maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
-    maven("https://oss.sonatype.org/content/repositories/snapshots")
-}
+jcommon {
+    javaVersion = JavaVersion.VERSION_25
 
-dependencies {
-    compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
-    compileOnly("me.clip:placeholderapi:2.11.5")
+    setupPaperRepository()
 
-    compileOnly("net.luckperms:api:5.4")
+    commonRepositories {
+        maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
+        maven("https://oss.sonatype.org/content/repositories/snapshots")
+    }
 
-    implementation("com.github.siroshun09.configapi:configapi-yaml:4.6.3")
-    implementation("com.github.siroshun09.translationloader:translationloader:2.0.2")
-}
+    commonDependencies {
+        compileOnly(libs.paper.api)
+        compileOnly(libs.placeholderapi)
+        compileOnly(libs.luckperms.api)
 
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(25))
-        vendor.set(JvmVendorSpec.ADOPTIUM)
+        implementation(libs.configapi.yaml)
+        implementation(libs.translationloader)
     }
 }
 
-tasks {
-    compileJava {
-        options.release.set(25)
-    }
+bundler {
+    copyToRootBuildDirectory("TimedPerms-${project.version}")
+    replacePluginVersionForBukkit(project.version)
+}
 
-    processResources {
-        filesMatching(listOf("plugin.yml", "en.yml", "ja_JP.yml")) {
-            expand("projectVersion" to version)
-        }
-    }
-
-    shadowJar {
-        relocate("com.github.siroshun09", "${project.group}.${project.name.lowercase()}.lib")
-        manifest {
-            attributes("paperweight-mappings-namespace" to "mojang")
-        }
-    }
-
-    build {
-        dependsOn(shadowJar)
+tasks.shadowJar {
+    relocate("com.github.siroshun09", "${project.group}.${project.name.lowercase()}.lib")
+    manifest {
+        attributes("paperweight-mappings-namespace" to "mojang")
     }
 }
 
