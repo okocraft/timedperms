@@ -1,7 +1,7 @@
 [versions]
 # libraries
 paper = "26.1.2.build.74-stable"
-placeholderapi = "2.11.5"
+placeholderapi = "2.12.3"
 luckperms = "5.4"
 configapi = "4.6.3"
 translationloader = "2.0.2"
