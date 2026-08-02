@@ -32,10 +32,10 @@ public class CommandExecutionSerializer implements ConfigurationSerializer<Comma
         if (!placeholderRequirement.regex().isEmpty()) {
             config.set("placeholder-requirement.regex", placeholderRequirement.regex());
         }
-        if (placeholderRequirement.moreThan() == Double.MAX_VALUE) {
+        if (placeholderRequirement.moreThan() != Double.MAX_VALUE) {
             config.set("placeholder-requirement.more-than", placeholderRequirement.moreThan());
         }
-        if (placeholderRequirement.lessThan() == Double.MIN_VALUE) {
+        if (placeholderRequirement.lessThan() != Double.MIN_VALUE) {
             config.set("placeholder-requirement.less-than", placeholderRequirement.lessThan());
         }
         if (!placeholderRequirement.commandsOnDenied().isEmpty()) {
