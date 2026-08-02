@@ -1,0 +1,9 @@
+name: Build
+on: [ push, pull_request ]
+
+jobs:
+  build-java-25:
+    uses: okocraft/workflows/.github/workflows/gradle.yml@v1
+    with:
+      java-version: '25'
+      package-name: timedperms-Build-${{ github.run_number }}
