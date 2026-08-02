@@ -52,13 +52,14 @@ public class Placeholder extends PlaceholderExpansion {
     }
 
     public int getSecondsFromArgs(OfflinePlayer context, String[] args) {
-        int permissionIndex = -1;
+        int firstContextIndex = -1;
         for (int i = 0; i < args.length; i++) {
-            permissionIndex = i - 1;
             if (args[i].contains("=")) {
+                firstContextIndex = i;
                 break;
             }
         }
+        int permissionIndex = firstContextIndex != -1 ? firstContextIndex - 1 : args.length - 1;
         if (permissionIndex < 0) {
             return -1;
         }
@@ -77,7 +78,7 @@ public class Placeholder extends PlaceholderExpansion {
             }
         }
 
-        if (!offlinePlayer.hasPlayedBefore()) {
+        if (offlinePlayer == null || !offlinePlayer.hasPlayedBefore()) {
             return -1;
         }
         LocalPlayer localPlayer = LocalPlayerFactory.get(offlinePlayer.getUniqueId());
