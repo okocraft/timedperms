@@ -208,6 +208,9 @@ public class TimedPermsCommand implements CommandExecutor, TabExecutor {
 
     private static String toString(PermissionNode node) {
         ContextSet contexts = node.getContexts();
+        if (contexts.isEmpty()) {
+            return node.getPermission();
+        }
         StringBuilder sb = new StringBuilder();
         contexts.forEach(c -> sb.append(c.getKey()).append("=").append(c.getValue()).append(","));
         return node.getPermission() + "(" + sb.substring(0, sb.length() - 1) + ")";
