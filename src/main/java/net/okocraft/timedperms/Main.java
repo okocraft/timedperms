@@ -104,18 +104,10 @@ public class Main extends JavaPlugin implements Listener {
     }
 
     public static Path getJarPath() {
-        String path = Main.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-        Path jarFilePath;
         try {
-            // for linux.
-            jarFilePath = Paths.get(path);
-        } catch (InvalidPathException e) {
-            // for windows.
-            if (path.startsWith("/")) {
-                path = path.substring(1);
-            }
-            jarFilePath = Paths.get(path);
+            return Paths.get(Main.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        return jarFilePath;
     }
 }
