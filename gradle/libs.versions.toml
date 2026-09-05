@@ -1,13 +1,13 @@
 [versions]
 # libraries
-paper = "26.2.build.119-stable"
+paper = "26.2.build.121-stable"
 placeholderapi = "2.12.3"
 luckperms = "5.4"
 configapi = "4.6.3"
 translationloader = "2.0.2"
 
 # gradle plugins
-gradle-plugins = "1.8.5"
+gradle-plugins = "1.8.6"
 
 [libraries]
 paper-api = { module = "io.papermc.paper:paper-api", version.ref = "paper" }
