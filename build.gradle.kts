@@ -14,7 +14,7 @@ jcommon {
     setupPaperRepository()
 
     commonRepositories {
-        maven("https://repo.extendedclip.com/content/repositories/placeholderapi/")
+        maven("https://repo.extendedclip.com/releases/")
         maven("https://oss.sonatype.org/content/repositories/snapshots")
     }
 
