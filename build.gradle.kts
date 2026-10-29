@@ -12,6 +12,8 @@ jcommon {
     javaVersion = JavaVersion.VERSION_25
 
     setupPaperRepository()
+    setupJUnit(libs.junit.bom)
+    setupMockito(libs.mockito)
 
     commonRepositories {
         maven("https://repo.extendedclip.com/releases/")
@@ -25,6 +27,11 @@ jcommon {
 
         compileOnly(libs.configurate.yaml)
         implementation(libs.mcmsgdef)
+        testImplementation(libs.junit.jupiter)
+        testImplementation(libs.mockito)
+        testImplementation(libs.paper.api)
+        testImplementation(libs.luckperms.api)
+        testImplementation(libs.configurate.yaml)
     }
 }
 
@@ -69,4 +76,9 @@ publishing {
             }
         }
     }
+}
+
+tasks.test {
+    dependsOn(tasks.shadowJar)
+    systemProperty("verification.pluginJar", tasks.shadowJar.get().archiveFile.get().asFile.absolutePath)
 }
