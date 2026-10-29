@@ -1,8 +1,5 @@
 package net.okocraft.timedperms.command;
 
-import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.Component.translatable;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,10 +10,10 @@ import java.util.OptionalInt;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.luckperms.api.context.ContextSet;
 import net.luckperms.api.node.types.PermissionNode;
 import net.okocraft.timedperms.Main;
+import net.okocraft.timedperms.language.Messages;
 import net.okocraft.timedperms.model.LocalPlayer;
 import net.okocraft.timedperms.model.LocalPlayerFactory;
 import org.bukkit.OfflinePlayer;
@@ -46,12 +43,12 @@ public class TimedPermsCommand implements CommandExecutor, TabExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label,
                              @NotNull String[] args) {
         if (!sender.hasPermission("timedperms.use")) {
-            sender.sendMessage(translatable("no-permission").color(NamedTextColor.RED));
+            sender.sendMessage(Messages.NO_PERMISSION);
             return true;
         }
 
         if (args.length <= 2) {
-            sender.sendMessage(translatable("not-enough-argument").color(NamedTextColor.RED));
+            sender.sendMessage(Messages.NOT_ENOUGH_ARGUMENT);
             return true;
         }
 
@@ -63,7 +60,7 @@ public class TimedPermsCommand implements CommandExecutor, TabExecutor {
         }
 
         if (!offlinePlayer.hasPlayedBefore() || offlinePlayer.getName() == null) {
-            sender.sendMessage(translatable("player-not-found").color(NamedTextColor.RED));
+            sender.sendMessage(Messages.PLAYER_NOT_FOUND);
             return true;
         }
         LocalPlayer player = LocalPlayerFactory.get(offlinePlayer.getUniqueId());
@@ -76,7 +73,7 @@ public class TimedPermsCommand implements CommandExecutor, TabExecutor {
             if (arg.contains("=")) {
                 String[] argPart = arg.split("=", -1);
                 if (argPart.length != 2) {
-                    sender.sendMessage(translatable("cannot-parse-permission-context").color(NamedTextColor.RED));
+                    sender.sendMessage(Messages.CANNOT_PARSE_PERMISSION_CONTEXT);
                     return true;
                 }
                 nodeBuilder.withContext(argPart[0], argPart[1]);
@@ -89,10 +86,8 @@ public class TimedPermsCommand implements CommandExecutor, TabExecutor {
 
         PermissionNode node = nodeBuilder.build();
         if (subCommand.equalsIgnoreCase("show")) {
-            sender.sendMessage(translatable("command-timedperms-show").color(NamedTextColor.GREEN).arguments(
-                    text(offlinePlayer.getName()).color(NamedTextColor.AQUA),
-                    text(toString(node)).color(NamedTextColor.AQUA),
-                    text(player.getSeconds(node)).color(NamedTextColor.AQUA)
+            sender.sendMessage(Messages.SHOW.apply(
+                    offlinePlayer.getName(), toString(node), player.getSeconds(node)
             ));
             return true;
         }
@@ -103,40 +98,31 @@ public class TimedPermsCommand implements CommandExecutor, TabExecutor {
         } else if (subCommand.equalsIgnoreCase("remove")) {
             secondDelta = player.getSeconds(node);
         } else {
-            sender.sendMessage(translatable("invalid-number").color(NamedTextColor.RED));
+            sender.sendMessage(Messages.INVALID_NUMBER);
             return true;
         }
         if (secondDelta <= 0) {
-            sender.sendMessage(translatable("invalid-number").color(NamedTextColor.RED));
+            sender.sendMessage(Messages.INVALID_NUMBER);
             return true;
         }
 
         if (subCommand.equalsIgnoreCase("remove")) {
             int now = player.removeSeconds(node, secondDelta);
-            sender.sendMessage(translatable("command-timedperms-remove").color(NamedTextColor.GREEN).arguments(
-                    text(offlinePlayer.getName()).color(NamedTextColor.AQUA),
-                    text(toString(node)).color(NamedTextColor.AQUA),
-                    text(secondDelta).color(NamedTextColor.AQUA),
-                    text(now).color(NamedTextColor.AQUA)
+            sender.sendMessage(Messages.REMOVE.apply(
+                    offlinePlayer.getName(), toString(node), secondDelta, now
             ));
         } else if (subCommand.equalsIgnoreCase("add")) {
             int now = player.addSeconds(node, secondDelta);
-            sender.sendMessage(translatable("command-timedperms-add").color(NamedTextColor.GREEN).arguments(
-                    text(offlinePlayer.getName()).color(NamedTextColor.AQUA),
-                    text(toString(node)).color(NamedTextColor.AQUA),
-                    text(secondDelta).color(NamedTextColor.AQUA),
-                    text(now).color(NamedTextColor.AQUA)
+            sender.sendMessage(Messages.ADD.apply(
+                    offlinePlayer.getName(), toString(node), secondDelta, now
             ));
         } else if (subCommand.equalsIgnoreCase("set")) {
             int now = player.setSeconds(node, secondDelta);
-            sender.sendMessage(translatable("command-timedperms-set").color(NamedTextColor.GREEN).arguments(
-                    text(offlinePlayer.getName()).color(NamedTextColor.AQUA),
-                    text(toString(node)).color(NamedTextColor.AQUA),
-                    text(now).color(NamedTextColor.AQUA)
+            sender.sendMessage(Messages.SET.apply(
+                    offlinePlayer.getName(), toString(node), now
             ));
         } else {
-            sender.sendMessage(translatable("unknown-subcommand")
-                    .color(NamedTextColor.RED).arguments(text(subCommand)));
+            sender.sendMessage(Messages.UNKNOWN_SUBCOMMAND.apply(subCommand));
         }
         return true;
     }

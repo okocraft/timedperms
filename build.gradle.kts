@@ -12,6 +12,7 @@ jcommon {
     javaVersion = JavaVersion.VERSION_25
 
     setupPaperRepository()
+    setupJUnit(libs.junit.bom)
 
     commonRepositories {
         maven("https://repo.extendedclip.com/releases/")
@@ -24,7 +25,12 @@ jcommon {
         compileOnly(libs.luckperms.api)
 
         implementation(libs.configapi.yaml)
-        implementation(libs.translationloader)
+        implementation(libs.mcmsgdef)
+
+        testImplementation(libs.junit.jupiter)
+        testImplementation(libs.adventure.api)
+        testImplementation(libs.adventure.minimessage)
+        testImplementation(libs.adventure.plain)
     }
 }
 
@@ -34,6 +40,7 @@ bundler {
 }
 
 tasks.shadowJar {
+    relocate("dev.siroshun.mcmsgdef", "${project.group}.${project.name.lowercase()}.lib.mcmsgdef")
     relocate("com.github.siroshun09", "${project.group}.${project.name.lowercase()}.lib")
     manifest {
         attributes("paperweight-mappings-namespace" to "mojang")

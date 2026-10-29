@@ -33,6 +33,39 @@ Even if player name contains underscore, you can use both format.
 
 If permission is not set or no data can be retrieved, placeholder return "-1".
 
+### Languages
+English is the fallback language. Messages are defined in Java (English) and bundled in
+`languages/ja.properties` (Japanese). On startup, editable UTF-8 files are created in
+`plugins/TimedPerms/languages/en.properties` and `ja.properties`. Missing defaults are
+appended without overwriting existing values. Restart the plugin after editing them.
+Messages use MiniMessage formatting and named placeholders.
+
+#### Migrating from TranslationLoader
+Existing `languages/*.yml` files are left untouched and are no longer loaded. There is
+no automatic conversion. Start the updated plugin once to generate the new files,
+then stop it, transfer your custom translations to the matching `.properties` files,
+and start it again. Use `ja.properties` for the former `ja_JP.yml` defaults; additional
+locales can be supplied as `<locale>.properties`, such as `ja_JP.properties`.
+
+Keep the existing message keys, remove YAML quotes, and replace positional arguments
+as follows:
+
+| Message key | `{0}` | `{1}` | `{2}` | `{3}` |
+| --- | --- | --- | --- | --- |
+| `command-timedperms-show` | `<player>` | `<permission>` | `<seconds>` | — |
+| `command-timedperms-add` / `command-timedperms-remove` | `<player>` | `<permission>` | `<seconds>` | `<remaining_seconds>` |
+| `command-timedperms-set` | `<player>` | `<permission>` | `<seconds>` | — |
+| `unknown-subcommand` | `<subcommand>` | — | — | — |
+
+MessageFormat escaping no longer applies: write an apostrophe as `'`, not `''`.
+Colors now belong in the translation itself, for example:
+
+```properties
+command-timedperms-show=<gray><aqua><player></aqua>'s permission <aqua><permission></aqua> has <aqua><seconds></aqua> seconds remaining.</gray>
+```
+
+The message system requires Paper 1.21.6 or later (Adventure 4.23.0+).
+
 ### For Developers
 First, retrieve LocalPlayer from LocalPlayerFactory#get(). Then you can do some stuff with it. Methods which operate time of permission returns calculated new value. Those time operation will fire event below.
 
