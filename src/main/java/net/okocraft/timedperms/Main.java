@@ -1,14 +1,11 @@
 package net.okocraft.timedperms;
 
-import com.github.siroshun09.configapi.api.util.ResourceUtils;
-import com.github.siroshun09.configapi.yaml.YamlConfiguration;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import net.okocraft.timedperms.command.TimedPermsCommand;
+import net.okocraft.timedperms.config.TimedPermsConfig;
 import net.okocraft.timedperms.language.TranslationManager;
 import net.okocraft.timedperms.listener.PlayerListener;
 import net.okocraft.timedperms.model.LocalPlayerFactory;
@@ -22,7 +19,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public class Main extends JavaPlugin implements Listener {
 
-    private final YamlConfiguration configuration = YamlConfiguration.create(getDataFolder().toPath().resolve("config.yml"));
+    private volatile TimedPermsConfig configuration;
     private final TranslationManager translationManager = new TranslationManager(getDataFolder().toPath());
     private final PlayerListener playerListener = new PlayerListener();
     private final Scheduler scheduler = Scheduler.create(this);
@@ -48,11 +45,11 @@ public class Main extends JavaPlugin implements Listener {
         }
 
         try {
-            ResourceUtils.copyFromJarIfNotExists(getJarPath(), "config.yml", configuration.getPath());
-            configuration.load();
+            configuration = TimedPermsConfig.load(getDataFolder().toPath().resolve("config.yml"));
         } catch (IOException e) {
             getLogger().log(Level.SEVERE, "Could not load config.yml", e);
             getServer().getPluginManager().disablePlugin(this);
+            return;
         }
 
         getServer().getPluginManager().registerEvents(playerListener, this);
@@ -88,8 +85,10 @@ public class Main extends JavaPlugin implements Listener {
 
         scheduler.shutdown();
 
-        for (Player p : getServer().getOnlinePlayers()) {
-            LocalPlayerFactory.get(p.getUniqueId()).saveAndClose();
+        if (configuration != null) {
+            for (Player p : getServer().getOnlinePlayers()) {
+                LocalPlayerFactory.get(p.getUniqueId()).saveAndClose();
+            }
         }
 
         playerListener.unsubscribeLuckPermsEvents();
@@ -98,8 +97,8 @@ public class Main extends JavaPlugin implements Listener {
         translationManager.unload();
     }
 
-    public YamlConfiguration getConfiguration() {
-        return this.configuration;
+    public TimedPermsConfig getConfiguration() {
+        return Objects.requireNonNull(configuration, "Configuration is not loaded");
     }
 
     public PlaceholderHook getPlaceholderHook() {
@@ -108,13 +107,5 @@ public class Main extends JavaPlugin implements Listener {
 
     public Scheduler getScheduler() {
         return scheduler;
-    }
-
-    public static Path getJarPath() {
-        try {
-            return Paths.get(Main.class.getProtectionDomain().getCodeSource().getLocation().toURI());
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 }
