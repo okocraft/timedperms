@@ -33,6 +33,11 @@ Even if player name contains underscore, you can use both format.
 
 If permission is not set or no data can be retrieved, placeholder return "-1".
 
+### Languages
+Edit `plugins/TimedPerms/languages/en.properties` or `ja.properties` to customize messages.
+Legacy YAML language files are no longer loaded; transfer custom translations manually
+using MiniMessage formatting and named placeholders from the generated files.
+
 ### For Developers
 First, retrieve LocalPlayer from LocalPlayerFactory#get(). Then you can do some stuff with it. Methods which operate time of permission returns calculated new value. Those time operation will fire event below.
 

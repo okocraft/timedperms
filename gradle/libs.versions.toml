@@ -4,7 +4,7 @@ paper = "26.3.build.223-stable"
 placeholderapi = "2.12.3"
 luckperms = "5.4"
 configapi = "4.6.3"
-translationloader = "2.0.2"
+mcmsgdef = "1.3.0"
 
 # gradle plugins
 gradle-plugins = "1.8.6"
@@ -15,7 +15,7 @@ placeholderapi = { module = "me.clip:placeholderapi", version.ref = "placeholder
 luckperms-api = { module = "net.luckperms:api", version.ref = "luckperms" }
 
 configapi-yaml = { module = "com.github.siroshun09.configapi:configapi-yaml", version.ref = "configapi" }
-translationloader = { module = "com.github.siroshun09.translationloader:translationloader", version.ref = "translationloader" }
+mcmsgdef = { module = "dev.siroshun.mcmsgdef:mcmsgdef", version.ref = "mcmsgdef" }
 
 [plugins]
 

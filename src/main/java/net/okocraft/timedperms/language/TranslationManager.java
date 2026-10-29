@@ -1,79 +1,61 @@
 package net.okocraft.timedperms.language;
 
-import com.github.siroshun09.configapi.api.Configuration;
-import com.github.siroshun09.configapi.api.util.ResourceUtils;
-import com.github.siroshun09.configapi.yaml.YamlConfiguration;
-import com.github.siroshun09.translationloader.ConfigurationLoader;
-import com.github.siroshun09.translationloader.TranslationLoader;
-import com.github.siroshun09.translationloader.directory.TranslationDirectory;
+import dev.siroshun.mcmsgdef.directory.DirectorySource;
+import dev.siroshun.mcmsgdef.directory.MessageProcessors;
+import dev.siroshun.mcmsgdef.file.PropertiesFile;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Locale;
-import java.util.jar.JarFile;
-
+import java.util.Map;
 import net.kyori.adventure.key.Key;
+import net.kyori.adventure.translation.GlobalTranslator;
+import net.kyori.adventure.translation.Translator;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class TranslationManager {
+public final class TranslationManager {
 
-    private final Path jarFilePath;
-    private final TranslationDirectory translationDirectory;
+    private static final Key LANGUAGE_KEY = Key.key("timedperms", "languages");
 
-    public TranslationManager(String pluginName, String pluginVersion, Path jarFilePath, Path pluginDirectory) {
-        this.jarFilePath = jarFilePath;
-        this.translationDirectory = TranslationDirectory.newBuilder()
-                .setDirectory(pluginDirectory.resolve("languages"))
-                .setKey(Key.key(pluginName.toLowerCase(Locale.ROOT), "languages"))
-                .setDefaultLocale(Locale.ENGLISH)
-                .onDirectoryCreated(this::saveDefaultLanguages)
-                .setVersion(pluginVersion)
-                .setTranslationLoaderCreator(this::getBundledTranslation)
-                .build();
+    private final Path languageDirectory;
+    private Translator messageSource;
+
+    public TranslationManager(Path pluginDirectory) {
+        this.languageDirectory = pluginDirectory.resolve("languages");
     }
 
-    public void load() {
-        try {
-            translationDirectory.load();
-        } catch (IOException e) {
-            e.printStackTrace();
+    public void load() throws IOException {
+        Translator nextSource = DirectorySource.propertiesFiles(languageDirectory)
+                .defaultLocale(Locale.ENGLISH, Locale.JAPANESE)
+                .primaryLocale(Locale.ENGLISH)
+                .messageProcessor(MessageProcessors.appendMissingMessagesToPropertiesFile(this::loadDefaultMessages))
+                .loadAsMiniMessageTranslationStore(LANGUAGE_KEY);
+
+        var globalTranslator = GlobalTranslator.translator();
+        if (messageSource != null) {
+            globalTranslator.removeSource(messageSource);
         }
+        globalTranslator.addSource(nextSource);
+        messageSource = nextSource;
     }
 
     public void unload() {
-        translationDirectory.unload();
-    }
-
-    private void saveDefaultLanguages(@NotNull Path directory) throws IOException {
-        List<String> files = Arrays.asList(
-                "en.yml",
-                "ja_JP.yml"
-        );
-        for (String file : files) {
-            ResourceUtils.copyFromJarIfNotExists(jarFilePath, ("languages/" + file), directory.resolve(file));
+        if (messageSource != null) {
+            GlobalTranslator.translator().removeSource(messageSource);
+            messageSource = null;
         }
     }
 
-    private @Nullable TranslationLoader getBundledTranslation(@NotNull Locale locale) throws IOException {
-        String strLocale = locale.toString();
-
-        if (!(strLocale.equals("en") || strLocale.equals("ja_JP"))) {
-            return null;
+    private @Nullable Map<String, String> loadDefaultMessages(@NotNull Locale locale) throws IOException {
+        if (locale.equals(Locale.ENGLISH)) {
+            return Messages.defaultMessages();
         }
 
-        Configuration source;
-
-        try (JarFile jar = new JarFile(jarFilePath.toFile());
-             InputStream input = ResourceUtils.getInputStreamFromJar(jar, "languages/" + strLocale + ".yml")) {
-            source = YamlConfiguration.loadFromInputStream(input);
+        try (var input = TranslationManager.class.getResourceAsStream("/languages/" + locale + ".properties")) {
+            if (input == null && locale.equals(Locale.JAPANESE)) {
+                throw new IOException("Bundled Japanese messages were not found");
+            }
+            return input != null ? PropertiesFile.load(input) : null;
         }
-
-        TranslationLoader loader = ConfigurationLoader.create(locale, source);
-        loader.load();
-
-        return loader;
     }
 }
