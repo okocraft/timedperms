@@ -23,7 +23,7 @@ jcommon {
         compileOnly(libs.placeholderapi)
         compileOnly(libs.luckperms.api)
 
-        implementation(libs.configapi.yaml)
+        compileOnly(libs.configurate.yaml)
         implementation(libs.mcmsgdef)
     }
 }
@@ -35,7 +35,6 @@ bundler {
 
 tasks.shadowJar {
     relocate("dev.siroshun.mcmsgdef", "${project.group}.${project.name.lowercase()}.lib.mcmsgdef")
-    relocate("com.github.siroshun09", "${project.group}.${project.name.lowercase()}.lib")
     manifest {
         attributes("paperweight-mappings-namespace" to "mojang")
     }

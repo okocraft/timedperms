@@ -13,6 +13,10 @@ public record PlaceholderRequirement(
     List<String> commandsOnDenied
 ) {
 
+    public PlaceholderRequirement {
+        commandsOnDenied = List.copyOf(commandsOnDenied);
+    }
+
     private static Main plugin;
 
     private Main getPlugin() {

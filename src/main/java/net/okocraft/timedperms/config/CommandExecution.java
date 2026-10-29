@@ -23,15 +23,14 @@ public record CommandExecution(
     List<String> commands
 ) {
 
-    private static List<CommandExecution> cache;
+    public CommandExecution {
+        commands = List.copyOf(commands);
+    }
+
     private static Main plugin;
 
     public static List<CommandExecution> getExecutions() {
-        if (cache == null) {
-            cache = getPlugin().getConfiguration()
-                    .getList("command-executions", CommandExecutionSerializer.SERIALIZER);
-        }
-        return cache;
+        return getPlugin().getConfiguration().commandExecutions();
     }
 
     private static Main getPlugin() {
