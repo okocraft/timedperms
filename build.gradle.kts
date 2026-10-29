@@ -12,7 +12,6 @@ jcommon {
     javaVersion = JavaVersion.VERSION_25
 
     setupPaperRepository()
-    setupJUnit(libs.junit.bom)
 
     commonRepositories {
         maven("https://repo.extendedclip.com/releases/")
@@ -26,11 +25,6 @@ jcommon {
 
         implementation(libs.configapi.yaml)
         implementation(libs.mcmsgdef)
-
-        testImplementation(libs.junit.jupiter)
-        testImplementation(libs.adventure.api)
-        testImplementation(libs.adventure.minimessage)
-        testImplementation(libs.adventure.plain)
     }
 }
 

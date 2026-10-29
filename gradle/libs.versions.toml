@@ -5,8 +5,6 @@ placeholderapi = "2.12.3"
 luckperms = "5.4"
 configapi = "4.6.3"
 mcmsgdef = "1.3.0"
-junit = "6.1.3"
-adventure = "5.2.0"
 
 # gradle plugins
 gradle-plugins = "1.8.6"
@@ -18,12 +16,6 @@ luckperms-api = { module = "net.luckperms:api", version.ref = "luckperms" }
 
 configapi-yaml = { module = "com.github.siroshun09.configapi:configapi-yaml", version.ref = "configapi" }
 mcmsgdef = { module = "dev.siroshun.mcmsgdef:mcmsgdef", version.ref = "mcmsgdef" }
-junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
-junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
-
-adventure-api = { module = "net.kyori:adventure-api", version.ref = "adventure" }
-adventure-minimessage = { module = "net.kyori:adventure-text-minimessage", version.ref = "adventure" }
-adventure-plain = { module = "net.kyori:adventure-text-serializer-plain", version.ref = "adventure" }
 
 [plugins]
 
