@@ -1,6 +1,6 @@
 [versions]
 # libraries
-paper = "26.3.build.243-stable"
+paper = "26.3.build.244-stable"
 placeholderapi = "2.12.3"
 luckperms = "5.4"
 configurate = "4.2.0"
